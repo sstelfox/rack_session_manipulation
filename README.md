@@ -20,8 +20,8 @@ Or install it yourself as:
 
 ## Contributing
 
-1. Reivew the [Contributor Code of Conduct][CODE_OF_CONDUCT.md]
-2. Fork it ( https://github.com/[my-github-username]/rack_session_manipulation/fork )
+1. Reivew the [Contributor Code of Conduct](CODE_OF_CONDUCT.md)
+2. Fork it ( https://github.com/sstelfox/rack_session_manipulation/fork )
 3. Create your feature branch (`git checkout -b my-new-feature`)
 4. Commit your changes (`git commit -am 'Add some feature'`)
 5. Push to the branch (`git push origin my-new-feature`)
