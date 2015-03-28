@@ -47,9 +47,13 @@ module RackSessionManipulation
 
     def update(request)
       session_data = request.params['session_data']
-      request.env['rack.session'] = RackSessionManipulation.decode(session_data)
+      RackSessionManipulation.decode(session_data).each do |k, v|
+        request.env['rack.session'][k] = v
+      end
 
       [204, headers(0), '']
+    rescue JSON::ParserError
+      [400, headers(0), '']
     end
   end
 end

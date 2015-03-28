@@ -3,8 +3,8 @@ module RackSessionManipulation
   # Capybara helpers for accessing and setting session values
   module Capybara
     def session=(hash)
-      data = { session_data: RackSessionManipulation.encode(hash) }
-      driver.put(RackSessionManipulation.config.path, params: data)
+      data = { 'session_data' => RackSessionManipulation.encode(hash) }
+      driver.put(RackSessionManipulation.config.path, data)
     end
 
     def session
