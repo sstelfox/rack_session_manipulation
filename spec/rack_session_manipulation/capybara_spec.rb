@@ -6,7 +6,7 @@ RSpec.describe(RackSessionManipulation::Capybara) do
   end
 
   context 'Module methods' do
-    let(:dummy_class) { Class.new { include RackSessionManipulation::Capybara } }
+    let(:dummy_class) { Class.new { include described_class } }
     let(:instance) { dummy_class.new }
 
     it 'retrieves the session\'s data' do
@@ -14,18 +14,18 @@ RSpec.describe(RackSessionManipulation::Capybara) do
       driver_double = double(get: nil, response: response_double)
 
       allow(instance).to receive(:driver).and_return(driver_double)
-      expect(instance.session).to eq({'test' => 'hash'})
+      expect(instance.session).to eq('test' => 'hash')
     end
 
     it 'puts the session\'s data' do
       path = RackSessionManipulation.config.path
-      params = {'session_data' => JSON.generate({'content' => 'text'})}
+      params = { 'session_data' => JSON.generate('content' => 'text') }
 
       driver_double = double
       allow(instance).to receive(:driver).and_return(driver_double)
       expect(driver_double).to receive(:put).with(path, params)
 
-      instance.session=({'content' => 'text'})
+      instance.session = { 'content' => 'text' }
     end
 
     it 'responds to session getter' do

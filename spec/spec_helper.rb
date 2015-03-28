@@ -29,7 +29,9 @@ RSpec.configure do |config|
   end
 
   config.mock_with :rspec do |mocks|
-    #mocks.verify_partial_doubles = true
+    # I use 'invalid' partial doubles to test associated methods in individual
+    # modules.
+    # mocks.verify_partial_doubles = true
     mocks.verify_doubled_constant_names = true
   end
 
