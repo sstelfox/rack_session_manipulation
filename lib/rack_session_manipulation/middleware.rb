@@ -13,8 +13,8 @@ module RackSessionManipulation
     def initialize(app, _options = {})
       @app = app
       @routes = {
-        GET: :retrieve,
-        PUT: :update
+        'GET' => :retrieve,
+        'PUT' => :update
       }
     end
 
