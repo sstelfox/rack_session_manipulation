@@ -1,17 +1,29 @@
+# Parent module for the Rack Session Manipulation middleware.
 module RackSessionManipulation
+  # Various utility methods that will be module level functions for the parent
+  # namespace module.
   module Utilities
+    def decode(encoded_data)
+      encoded_data
+    end
+
+    def encode(obj)
+      obj
+    end
+
     # SecureRandom raises a NotImplementedError if no random device is
     # available in that case fallback on Kernel.rand. Shamelessly stolen from
     # the Sinatra session secret generation code.
     #
     # @return [String]
     def random_path_prefix
-      begin
+      num = begin
         require 'securerandom'
-        SecureRandom.hex(16)
+        SecureRandom.random_number(2**64 - 1)
       rescue LoadError, NotImplementedError
-        "%016x" % Kernel.rand(2**64-1)
+        Kernel.rand(2**64 - 1)
       end
+      format('/%016x', num)
     end
   end
 end

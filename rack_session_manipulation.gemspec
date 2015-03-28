@@ -5,17 +5,17 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rack_session_manipulation/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'rack_session_manipulation'
-  spec.version       = RackSessionManipulation::VERSION
-  spec.authors       = ['Sam Stelfox']
-  spec.email         = ['sstelfox@bedroomprogrammers.net']
+  spec.name     = 'rack_session_manipulation'
+  spec.version  = RackSessionManipulation::VERSION
+  spec.authors  = ['Sam Stelfox']
+  spec.email    = ['sstelfox@bedroomprogrammers.net']
+  spec.files    = `git ls-files -z`.split("\x0").reject { |f| f =~ /^spec\// }
 
-  spec.summary       = %q{A rack middleware for exposing session state to tests.}
-  spec.description   = %q{A rack middleware for exposing session state to tests.}
-  spec.homepage      = 'https://github.com/sstelfox/rack_session_manipulation'
-  spec.license       = 'MIT'
+  spec.summary     = 'A rack middleware for exposing session state to tests.'
+  spec.description = 'A rack middleware for exposing session state to tests.'
+  spec.homepage    = 'https://github.com/sstelfox/rack_session_manipulation'
+  spec.license     = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 1.8'

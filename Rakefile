@@ -36,7 +36,7 @@ task 'environment' do
 end
 
 desc 'Run a console with the application loaded'
-task :console => [:environment] do
+task console: [:environment] do
   require 'pry'
   pry
 end

@@ -3,6 +3,7 @@ require 'rack_session_manipulation/middleware'
 require 'rack_session_manipulation/utilities'
 require 'rack_session_manipulation/version'
 
+# Parent module for the Rack Session Manipulation middleware.
 module RackSessionManipulation
   extend RackSessionManipulation::Utilities
 
