@@ -6,7 +6,12 @@ RSpec.describe(RackSessionManipulation::Capybara) do
   end
 
   context 'Module methods' do
-    let(:dummy_class) { Class.new { include described_class } }
+    let(:dummy_class) do
+      c = Class.new
+      c.include(described_class)
+      c
+    end
+
     let(:instance) { dummy_class.new }
 
     it 'retrieves the session\'s data' do

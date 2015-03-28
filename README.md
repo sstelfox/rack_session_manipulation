@@ -1,7 +1,7 @@
 # RackSessionManipulation
 
 [![Build Status](https://travis-ci.org/sstelfox/rack_session_manipulation.svg)](https://travis-ci.org/sstelfox/rack_session_manipulation)
-[![Coverage Status](https://coveralls.io/repos/sstelfox/rack_session_manipulation/badge.svg)](https://coveralls.io/r/sstelfox/rack_session_manipulation)
+[![Coverage Status](https://coveralls.io/repos/sstelfox/rack_session_manipulation/badge.svg?branch=develop)](https://coveralls.io/r/sstelfox/rack_session_manipulation?branch=develop)
 [![Dependency Status](https://gemnasium.com/sstelfox/rack_session_manipulation.svg)](https://gemnasium.com/sstelfox/rack_session_manipulation)
 [![Code Climate](https://codeclimate.com/github/sstelfox/rack_session_manipulation/badges/gpa.svg)](https://codeclimate.com/github/sstelfox/rack_session_manipulation)
 
