@@ -5,7 +5,7 @@ module RackSessionManipulation
     def session=(hash)
       data = { session_data: RackSessionManipulation.encode(hash) }
 
-      page.driver.put(RackSessionManipulation.config.path, data)
+      page.driver.put(RackSessionManipulation.config.path, params: data)
       page.driver.status_code.should eql(204)
     end
 

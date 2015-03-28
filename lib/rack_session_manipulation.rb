@@ -1,3 +1,5 @@
+require 'json'
+
 require 'rack_session_manipulation/config'
 require 'rack_session_manipulation/middleware'
 require 'rack_session_manipulation/utilities'

@@ -4,11 +4,11 @@ module RackSessionManipulation
   # namespace module.
   module Utilities
     def decode(encoded_data)
-      encoded_data
+      JSON.parse(encoded_data)
     end
 
     def encode(obj)
-      obj
+      JSON.generate(obj)
     end
 
     # SecureRandom raises a NotImplementedError if no random device is
