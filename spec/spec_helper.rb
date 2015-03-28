@@ -20,6 +20,7 @@ end
 SimpleCov.start
 
 require 'rack_session_manipulation'
+require 'rack_session_manipulation/capybara'
 require 'apps/rack_app'
 
 RSpec.configure do |config|

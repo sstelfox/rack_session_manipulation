@@ -39,14 +39,15 @@ module RackSessionManipulation
     end
 
     def retrieve(request)
-      content = RackSessionManipulation.encode(request.session)
+      session_hash = request.env['rack.session'].to_hash
+      content = RackSessionManipulation.encode(session_hash)
 
       [200, headers(content.length), content]
     end
 
     def update(request)
       session_data = request.params['session_data']
-      request.session = RackSessionManipulation.decode(session_data)
+      request.env['rack.session'] = RackSessionManipulation.decode(session_data)
 
       [204, headers(0), '']
     end

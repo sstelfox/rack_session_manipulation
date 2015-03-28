@@ -4,16 +4,15 @@ module RackSessionManipulation
   module Capybara
     def session=(hash)
       data = { session_data: RackSessionManipulation.encode(hash) }
-
-      page.driver.put(RackSessionManipulation.config.path, params: data)
-      page.driver.status_code.should eql(204)
+      driver.put(RackSessionManipulation.config.path, params: data)
     end
 
     def session
-      page.driver.get(RackSessionManipulation.config.path)
-      page.driver.status_code.should eql(200)
-
-      RackSessionManipulation.decode(page.driver.last_response.body)
+      driver.get(RackSessionManipulation.config.path)
+      RackSessionManipulation.decode(driver.response.body)
     end
   end
 end
+
+require 'capybara/session'
+Capybara::Session.send(:include, RackSessionManipulation::Capybara)
