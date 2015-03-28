@@ -5,8 +5,9 @@ module RackSessionManipulation
   class Middleware
     def call(env)
       request = Rack::Request.new(env)
-      return send(action, request) if (action = get_action(request))
-      @app.call(env)
+
+      action = get_action(request)
+      action.nil? ? @app.call(env) : send(action, request)
     end
 
     def initialize(app, _options = {})
@@ -26,7 +27,7 @@ module RackSessionManipulation
     end
 
     def get_action(request)
-      return unless request.path == RackSessionManipulation.path
+      return unless request.path == RackSessionManipulation.config.path
       @routes[extract_method(request)]
     end
 

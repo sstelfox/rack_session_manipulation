@@ -4,6 +4,9 @@ require 'rspec'
 require 'simplecov'
 require 'coveralls'
 
+require 'rack/test'
+require 'capybara/rspec'
+
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
@@ -17,6 +20,7 @@ end
 SimpleCov.start
 
 require 'rack_session_manipulation'
+require 'apps/rack_app'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -31,7 +35,7 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.disable_monkey_patching!
-  config.warnings = true
+  config.warnings = false
   config.default_formatter = 'doc' if config.files_to_run.one?
   config.profile_examples = 3
   config.order = :random
