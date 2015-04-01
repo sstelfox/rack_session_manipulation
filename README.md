@@ -23,6 +23,14 @@ authentication. Use in production can lead to abuses such as user
 impersonation, privilege escalation, and private information exposure depending
 on what the application stores in the session.
 
+There is a very similar rack middleware [RackSessionAccess][1] that
+accomplishes more or less the same task. I wasn't particularly fond of how that
+gem solved the updating of state with multiple rack requests or the unecessary
+use of builder and marshalled objects to accomplish the task.
+
+RackSessionManipulation strives to be a bit lighter, and safer, while having a
+high quality code base following the best ruby practices.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -43,9 +51,25 @@ Or install it yourself as:
 
 ## Contributing
 
-1. Reivew the [Contributor Code of Conduct](CODE_OF_CONDUCT.md)
+I welcome new ideas, bug fixes and comments from anyone and strive to take no
+longer than a week to respond to issues, PRs, or various comments.
+
+All code submitted through PRs will be licensed under this project's MIT
+license, if this is a problem please instead open an issue before making your
+changes indicating this and I depending on the request I may make the requested
+changes myself or attempt to convince about the usage of this license. I want
+to avoid a multi-license code base that may impede any individual's usage of
+this code.
+
+With all that said, if you'd like to contribute please follow the standard
+contribution guide:
+
+1. Review the [Contributor Code of Conduct][2]
 2. Fork it ( https://github.com/sstelfox/rack_session_manipulation/fork )
 3. Create your feature branch (`git checkout -b my-new-feature`)
 4. Commit your changes (`git commit -am 'Add some feature'`)
 5. Push to the branch (`git push origin my-new-feature`)
-6. Create a new Pull Request
+6. Create a new Pull Request against this repo's develop branch
+
+[1]: https://github.com/railsware/rack_session_access
+[2]: CODE_OF_CONDUCT.md
