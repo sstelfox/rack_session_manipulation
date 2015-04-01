@@ -7,6 +7,22 @@
 [![Code Climate](https://codeclimate.com/github/sstelfox/rack_session_manipulation/badges/gpa.svg)](https://codeclimate.com/github/sstelfox/rack_session_manipulation)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-green.svg)](http://www.rubydoc.info/gems/rack_session_manipulation)
 
+RackSessionManipulation is rack middleware designed to expose internal session
+information to be read and modified from within tests. This is intended to
+assist in treating routes as modular units of work that can be tested in
+isolation without the dependency of the rest of your application.
+
+This is not intended to replace full set of 'behavior' tests, but can be used
+to speed up getting to a 'Given' state in place of helpers that previously
+would be forced to walk through your entire application stack to establish the
+target state. That walkthrough is valuable but can be redundant and unecessary.
+
+This middleware should never be used in production as it allows arbitrary
+tampering of encrypted server-side session information without any form of
+authentication. Use in production can lead to abuses such as user
+impersonation, privilege escalation, and private information exposure depending
+on what the application stores in the session.
+
 ## Installation
 
 Add this line to your application's Gemfile:

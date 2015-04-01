@@ -8,7 +8,7 @@ RSpec.describe(RackSessionManipulation::Utilities) do
       c
     end
 
-    let(:test_hash) { {'test' => 'hash'} }
+    let(:test_hash) { { 'test' => 'hash' } }
     let(:test_json) { JSON.generate(test_hash) }
 
     it 'encodes hashes with JSON' do
@@ -16,8 +16,7 @@ RSpec.describe(RackSessionManipulation::Utilities) do
     end
 
     it 'decodes JSON to hashes' do
-      target_json = JSON.generate({ test: 'hash' })
-      expect { dummy_class.decode(test_json) }.to_not raise_error
+      expect(-> { dummy_class.decode(test_json) }).to_not raise_error
       expect(dummy_class.decode(test_json)).to eql(test_hash)
     end
   end
