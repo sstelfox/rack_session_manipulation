@@ -15,5 +15,6 @@ end
 RackApp = Rack::Builder.new do
   use Rack::Session::Cookie, secret: 'random-unimportant-string'
   use RackSessionManipulation::Middleware
+
   run HelloReflector
 end.to_app
