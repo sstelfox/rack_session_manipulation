@@ -13,8 +13,9 @@ module RackSessionManipulation
     def initialize(app, _options = {})
       @app = app
       @routes = {
-        'GET' => :retrieve,
-        'PUT' => :update
+        'DELETE'  => :reset,
+        'GET'     => :retrieve,
+        'PUT'     => :update
       }
     end
 
@@ -38,6 +39,11 @@ module RackSessionManipulation
       }
     end
 
+    def reset(request)
+      request.env['rack.session'].destroy
+      [204, headers(0), '']
+    end
+
     def retrieve(request)
       session_hash = request.env['rack.session'].to_hash
       content = RackSessionManipulation.encode(session_hash)
@@ -51,7 +57,8 @@ module RackSessionManipulation
         request.env['rack.session'][k] = v
       end
 
-      [204, headers(0), '']
+      loc_hdr = { 'Location' => RackSessionManipulation.config.path }
+      [303, headers(0).merge(loc_hdr), '']
     rescue JSON::ParserError
       [400, headers(0), '']
     end

@@ -1,7 +1,11 @@
-# Parent module for the Rack Session Manipulation middleware.
 module RackSessionManipulation
-  # Capybara helpers for accessing and setting session values
+  # This module exposes the session state helpers to Capybara, allowing feature
+  # tests to quickly access the session mechanisms.
   module Capybara
+    def reset_session
+      driver.delete(RackSessionManipulation.config.path)
+    end
+
     def session=(hash)
       data = { 'session_data' => RackSessionManipulation.encode(hash) }
       driver.put(RackSessionManipulation.config.path, data)
