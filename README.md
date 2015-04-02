@@ -15,7 +15,13 @@ isolation without the dependency of the rest of your application.
 This is not intended to replace full set of 'behavior' tests, but can be used
 to speed up getting to a 'Given' state in place of helpers that previously
 would be forced to walk through your entire application stack to establish the
-target state. That walkthrough is valuable but can be redundant and unecessary.
+target state. That walkthrough is valuable but can be redundant and unecessary
+when they are only used to setup other tests.
+
+RackSessionManipulation strives to be a lightweight and safe, while having a
+high quality code base following the best ruby practices.
+
+## Security Information
 
 This middleware should never be used in production as it allows arbitrary
 tampering of encrypted server-side session information without any form of
@@ -23,13 +29,13 @@ authentication. Use in production can lead to abuses such as user
 impersonation, privilege escalation, and private information exposure depending
 on what the application stores in the session.
 
+## Alternatives
+
 There is a very similar rack middleware [RackSessionAccess][1] that
 accomplishes more or less the same task. I wasn't particularly fond of how that
-gem solved the updating of state with multiple rack requests or the unecessary
-use of builder and marshalled objects to accomplish the task.
-
-RackSessionManipulation strives to be a bit lighter, and safer, while having a
-high quality code base following the best ruby practices.
+gem solved the updating of state using multiple requests, and marshalled
+objects as well as unecessary use of builder. The approach seemed more
+complicated, slower and more dangerous than necessary.
 
 ## Installation
 
