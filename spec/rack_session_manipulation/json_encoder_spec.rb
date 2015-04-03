@@ -6,7 +6,8 @@ RSpec.describe(RackSessionManipulation::JSONEncoder) do
     let(:test_json) { JSON.generate(test_hash) }
 
     it 'encodes hashes with JSON' do
-      expect { JSON.parse(described_class.encode(test_hash)) }.to_not raise_error
+      expect(-> { described_class.encode(test_hash) }).to_not raise_error
+      expect(described_class.encode(test_hash)).to eql(test_json)
     end
 
     it 'decodes JSON to hashes' do

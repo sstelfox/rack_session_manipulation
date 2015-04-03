@@ -17,7 +17,8 @@ module RackSessionManipulation
   #
   # @return [RackSessionManipulation::Config]
   def self.config
-    @config ||= RackSessionManipulation::Config.new(random_path_prefix, RackSessionManipulation::JSONEncoder)
+    @config ||= RackSessionManipulation::Config.new(random_path_prefix,
+                  RackSessionManipulation::JSONEncoder)
   end
 
   # Allows block DSL style configuration of the global configuration instance.
