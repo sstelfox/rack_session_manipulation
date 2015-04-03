@@ -14,7 +14,7 @@ module RackSessionManipulation
     # @return [Hash] Hash of the session
     def session
       driver.get(RackSessionManipulation.config.path)
-      RackSessionManipulation.decode(driver.response.body)
+      RackSessionManipulation.config.encoder.decode(driver.response.body)
     end
 
     # Updates the state of the current session. An important thing to note
@@ -28,7 +28,7 @@ module RackSessionManipulation
     #
     # @param [Hash] hash Data to be set / updated within the current session.
     def session=(hash)
-      data = { 'session_data' => RackSessionManipulation.encode(hash) }
+      data = { 'session_data' => RackSessionManipulation.config.encoder.encode(hash) }
       driver_method_fallback(:put, RackSessionManipulation.config.path, data)
     end
 

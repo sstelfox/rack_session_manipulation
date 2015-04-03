@@ -95,7 +95,7 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def retrieve(request)
       session_hash = request.env['rack.session'].to_hash
-      content = RackSessionManipulation.encode(session_hash)
+      content = RackSessionManipulation.config.encoder.encode(session_hash)
 
       [200, headers(content.length), content]
     end
@@ -108,7 +108,7 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def update(request)
       session_data = request.params['session_data']
-      RackSessionManipulation.decode(session_data).each do |k, v|
+      RackSessionManipulation.config.encoder.decode(session_data).each do |k, v|
         request.env['rack.session'][k] = v
       end
 

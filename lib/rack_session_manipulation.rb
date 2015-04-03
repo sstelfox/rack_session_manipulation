@@ -1,6 +1,7 @@
 require 'json'
 
 require 'rack_session_manipulation/config'
+require 'rack_session_manipulation/json_encoder'
 require 'rack_session_manipulation/middleware'
 require 'rack_session_manipulation/utilities'
 require 'rack_session_manipulation/version'
@@ -16,7 +17,7 @@ module RackSessionManipulation
   #
   # @return [RackSessionManipulation::Config]
   def self.config
-    @config ||= RackSessionManipulation::Config.new(random_path_prefix)
+    @config ||= RackSessionManipulation::Config.new(random_path_prefix, RackSessionManipulation::JSONEncoder)
   end
 
   # Allows block DSL style configuration of the global configuration instance.
