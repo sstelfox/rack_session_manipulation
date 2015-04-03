@@ -6,15 +6,15 @@ module RackSessionManipulation
     # Provides a mechanism to completely reset the server's session to a fresh
     # blank slate.
     def reset_session
-      driver_method_fallback(:delete, RackSessionManipulation.config.path, data)
+      driver_method_fallback(:delete, session_manipulation_config[:path], data)
     end
 
     # Retrieve a hash containing the entire state of the current session.
     #
     # @return [Hash] Hash of the session
     def session
-      driver.get(RackSessionManipulation.config.path)
-      RackSessionManipulation.config.encoder.decode(driver.response.body)
+      driver.get(session_manipulation_config[:path])
+      session_manipulation_config[:encoder].decode(driver.response.body)
     end
 
     # Updates the state of the current session. An important thing to note
@@ -28,8 +28,12 @@ module RackSessionManipulation
     #
     # @param [Hash] hash Data to be set / updated within the current session.
     def session=(hash)
-      data = { 'session_data' => RackSessionManipulation.config.encoder.encode(hash) }
-      driver_method_fallback(:put, RackSessionManipulation.config.path, data)
+      data = { 'session_data' => session_manipulation_config[:encoder].encode(hash) }
+      driver_method_fallback(:put, session_manipulation_config[:path], data)
+    end
+
+    def session_manipulation_config
+      @rsm_config ||= Middleware::DEFAULT_OPTIONS
     end
 
     protected

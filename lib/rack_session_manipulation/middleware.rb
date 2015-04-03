@@ -3,6 +3,14 @@ module RackSessionManipulation
   # Rack middleware that handles the accessing and modification of session
   # state.
   class Middleware
+    # Various default configuration options for the middleware.
+    DEFAULT_OPTIONS = {
+      encoder: RackSessionManipulation::JSONEncoder,
+      path:   '/rsm_session_path'
+    }
+
+    attr_reader :app, :options, :routes
+
     # Primary entry point of this middleware. Every request that makes it this
     # far into the stack will be parsed and when it matches something this
     # middleware is designed to handle it will stop the chain and process it
@@ -16,7 +24,7 @@ module RackSessionManipulation
       request = Rack::Request.new(env)
 
       action = get_action(request)
-      action.nil? ? @app.call(env) : send(action, request)
+      action.nil? ? app.call(env) : send(action, request)
     end
 
     # Setup the middleware with the primary application passed in, anything we
@@ -24,16 +32,17 @@ module RackSessionManipulation
     #
     # @param [Object#call] app A rack application that implements the #call
     #   method.
-    def initialize(app)
+    # @param [Hash<Symbol=>Object>] opts Configuration options for the
+    #   middleware.
+    def initialize(app, opts = {})
       @app = app
+      @options = DEFAULT_OPTIONS.merge(opts)
       @routes = {
         'DELETE'  => :reset,
         'GET'     => :retrieve,
         'PUT'     => :update
       }
     end
-
-    protected
 
     # Look up what HTTP method was used for this request. In the event the
     # client doesn't support all HTTP methods, the standard '_method' parameter
@@ -63,8 +72,8 @@ module RackSessionManipulation
     # @return [Symbol,Nil] Name of method to use or nil if this middleware
     #   should pass the request on to the app.
     def get_action(request)
-      return unless request.path == RackSessionManipulation.config.path
-      @routes[extract_method(request)]
+      return unless request.path == options[:path]
+      routes[extract_method(request)]
     end
 
     # A helper mechanism to consistently generate common headers client will
@@ -95,7 +104,7 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def retrieve(request)
       session_hash = request.env['rack.session'].to_hash
-      content = RackSessionManipulation.config.encoder.encode(session_hash)
+      content = options[:encoder].encode(session_hash)
 
       [200, headers(content.length), content]
     end
@@ -108,11 +117,11 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def update(request)
       session_data = request.params['session_data']
-      RackSessionManipulation.config.encoder.decode(session_data).each do |k, v|
+      options[:encoder].decode(session_data).each do |k, v|
         request.env['rack.session'][k] = v
       end
 
-      loc_hdr = { 'Location' => RackSessionManipulation.config.path }
+      loc_hdr = { 'Location' => options[:path] }
       [303, headers(0).merge(loc_hdr), '']
     rescue JSON::ParserError
       [400, headers(0), '']
