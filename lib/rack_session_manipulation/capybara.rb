@@ -28,7 +28,9 @@ module RackSessionManipulation
     #
     # @param [Hash] hash Data to be set / updated within the current session.
     def session=(hash)
-      data = { 'session_data' => session_manipulation_config[:encoder].encode(hash) }
+      data = {
+        'session_data' => session_manipulation_config[:encoder].encode(hash)
+      }
       driver_method_fallback(:put, session_manipulation_config[:path], data)
     end
 
