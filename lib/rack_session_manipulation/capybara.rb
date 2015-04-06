@@ -5,8 +5,8 @@ module RackSessionManipulation
   module Capybara
     # Provides a mechanism to completely reset the server's session to a fresh
     # blank slate.
-    def reset_session
-      driver_method_fallback(:delete, session_manipulation_config.path, data)
+    def session_reset
+      driver_method_fallback(:delete, session_manipulation_config.path, {})
     end
 
     # Retrieve a hash containing the entire state of the current session.
@@ -59,7 +59,7 @@ module RackSessionManipulation
         return
       end
 
-      data.merge!('_method' => method.to_s.upcase)
+      dat.merge!('_method' => method.to_s.upcase)
       driver.respond_to?(:post) ? driver.post(path, dat) : driver.get(path, dat)
     end
   end
