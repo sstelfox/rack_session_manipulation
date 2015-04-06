@@ -21,7 +21,7 @@ when they are only used to setup other tests.
 RackSessionManipulation strives to be a lightweight and safe, while having a
 high quality code base following the best ruby practices.
 
-## Security Information
+## Security Notice
 
 This middleware should never be used in production as it allows arbitrary
 tampering of encrypted server-side session information without any form of

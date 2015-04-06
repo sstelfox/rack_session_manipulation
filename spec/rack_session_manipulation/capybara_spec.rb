@@ -62,8 +62,10 @@ RSpec.describe(RackSessionManipulation::Capybara) do
 
     context 'Partial driver support' do
       it 'deletes the session\'s data' do
+        params = { '_method' => 'DELETE' }
+
         expect(driver_double).to_not respond_to(:delete)
-        expect(driver_double).to receive(:post).with(config.path, { '_method' => 'DELETE' })
+        expect(driver_double).to receive(:post).with(config.path, params)
 
         instance.session_reset
       end
@@ -83,8 +85,10 @@ RSpec.describe(RackSessionManipulation::Capybara) do
 
     context 'Minimal driver support' do
       it 'deletes the session\'s data' do
+        params = { '_method' => 'DELETE' }
+
         expect(driver_double).to_not respond_to(:delete)
-        expect(driver_double).to receive(:get).with(config.path, { '_method' => 'DELETE' })
+        expect(driver_double).to receive(:get).with(config.path, params)
 
         instance.session_reset
       end
