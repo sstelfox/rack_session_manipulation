@@ -3,13 +3,7 @@ module RackSessionManipulation
   # Rack middleware that handles the accessing and modification of session
   # state.
   class Middleware
-    # Various default configuration options for the middleware.
-    DEFAULT_OPTIONS = {
-      encoder: RackSessionManipulation::JSONEncoder,
-      path:   '/rsm_session_path'
-    }
-
-    attr_reader :app, :options, :routes
+    attr_reader :app, :config, :routes
 
     # Primary entry point of this middleware. Every request that makes it this
     # far into the stack will be parsed and when it matches something this
@@ -36,7 +30,7 @@ module RackSessionManipulation
     #   middleware.
     def initialize(app, opts = {})
       @app = app
-      @options = DEFAULT_OPTIONS.merge(opts)
+      @config = Config.new(opts)
       @routes = {
         'DELETE'  => :reset,
         'GET'     => :retrieve,
@@ -72,7 +66,7 @@ module RackSessionManipulation
     # @return [Symbol,Nil] Name of method to use or nil if this middleware
     #   should pass the request on to the app.
     def get_action(request)
-      return unless request.path == options[:path]
+      return unless request.path == config.path
       routes[extract_method(request)]
     end
 
@@ -104,7 +98,7 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def retrieve(request)
       session_hash = request.env['rack.session'].to_hash
-      content = options[:encoder].encode(session_hash)
+      content = config.encoder.encode(session_hash)
 
       [200, headers(content.length), content]
     end
@@ -117,11 +111,11 @@ module RackSessionManipulation
     # @return [Array<Fixnum, Hash, String>]
     def update(request)
       session_data = request.params['session_data']
-      options[:encoder].decode(session_data).each do |k, v|
+      config.encoder.decode(session_data).each do |k, v|
         request.env['rack.session'][k] = v
       end
 
-      loc_hdr = { 'Location' => options[:path] }
+      loc_hdr = { 'Location' => config.path }
       [303, headers(0).merge(loc_hdr), '']
     rescue JSON::ParserError
       [400, headers(0), '']

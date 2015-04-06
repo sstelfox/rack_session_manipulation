@@ -23,7 +23,7 @@ RSpec.describe(RackSessionManipulation::Capybara) do
     end
 
     it 'puts the session\'s data' do
-      path = instance.session_manipulation_config[:path]
+      path = instance.session_manipulation_config.path
       params = { 'session_data' => JSON.generate('content' => 'text') }
 
       driver_double = double
