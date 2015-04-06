@@ -1,4 +1,6 @@
 RSpec/FilePath:
   Enabled: false
+Style/RegexpLiteral:
+  AllowInnerSlashes: yes
 require:
 - rubocop-rspec
