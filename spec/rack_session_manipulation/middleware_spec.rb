@@ -6,19 +6,16 @@ RSpec.describe(RackSessionManipulation::Middleware) do
 
   subject { described_class.new(app) }
 
-  context 'Original application' do
-    it 'falls back to the normal app when path doesn\'t match' do
-      env = Rack::MockRequest.env_for('/users/1')
-      expect(app).to receive(:call).with(env)
+  context 'Action Handlers' do
+    let(:env)     { double }
+    let(:request) { double }
+    let(:session) { double }
 
-      subject.call(env)
-    end
-
-    it 'falls back to the normal app when method doesn\'t match' do
-      env = Rack::MockRequest.env_for(default_config.path, method: :post)
-      expect(app).to receive(:call).with(env)
-
-      subject.call(env)
+    it 'allows reseting the session state' do
+      expect(request).to receive(:env).and_return(env)
+      expect(env).to receive(:[]).with('rack.session').and_return(session)
+      expect(session).to receive(:clear)
+      expect(subject.reset(request)).to eql([204, subject.headers(0), ''])
     end
   end
 
@@ -47,6 +44,22 @@ RSpec.describe(RackSessionManipulation::Middleware) do
     it 'calls the update method on a PUT request' do
       env = Rack::MockRequest.env_for(default_config.path, method: :put)
       expect(subject).to receive(:update)
+
+      subject.call(env)
+    end
+  end
+
+  context 'Original application' do
+    it 'falls back to the normal app when path doesn\'t match' do
+      env = Rack::MockRequest.env_for('/users/1')
+      expect(app).to receive(:call).with(env)
+
+      subject.call(env)
+    end
+
+    it 'falls back to the normal app when method doesn\'t match' do
+      env = Rack::MockRequest.env_for(default_config.path, method: :post)
+      expect(app).to receive(:call).with(env)
 
       subject.call(env)
     end
