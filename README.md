@@ -72,10 +72,15 @@ contribution guide:
 
 1. Review the [Contributor Code of Conduct][2]
 2. Fork it ( https://github.com/sstelfox/rack_session_manipulation/fork )
-3. Create your feature branch (`git checkout -b my-new-feature`)
+3. Create your feature branch (`git checkout -b my-new-feature develop`)
 4. Commit your changes (`git commit -am 'Add some feature'`)
 5. Push to the branch (`git push origin my-new-feature`)
 6. Create a new Pull Request against this repo's develop branch
+
+Code in the master branch is the latest released version. All code that has
+made it into the develop branch is staged for the next release. All tests must
+be passing before the code will get merged into develop. Along those lines,
+please write tests to cover bugs found or features added!
 
 [1]: https://github.com/railsware/rack_session_access
 [2]: CODE_OF_CONDUCT.md
