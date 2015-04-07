@@ -5,6 +5,48 @@ module RackSessionManipulation
   class Middleware
     attr_reader :app, :config, :routes
 
+    # @!group Action Handlers
+
+    # Handle requests to entirely reset the session state.
+    #
+    # @param [Rack::Request] request
+    # @return [Array<Fixnum, Hash, String>]
+    def reset(request)
+      request.env['rack.session'].clear
+      [204, headers(0), '']
+    end
+
+    # Retrieve the entire contents of the session and properly encode it
+    # before returning.
+    #
+    # @param [Rack::Request] request
+    # @return [Array<Fixnum, Hash, String>]
+    def retrieve(request)
+      session_hash = request.env['rack.session'].to_hash
+      content = config.encoder.encode(session_hash)
+
+      [200, headers(content.length), content]
+    end
+
+    # Update the current state of the session with the provided data. This
+    # works effectively like a hash merge on the current session only setting
+    # and overriding keys in the session data provided.
+    #
+    # @param [Rack::Request] request
+    # @return [Array<Fixnum, Hash, String>]
+    def update(request)
+      session_data = request.params['session_data']
+      config.encoder.decode(session_data).each do |k, v|
+        request.env['rack.session'][k] = v
+      end
+
+      loc_hdr = { 'Location' => config.path }
+      [303, headers(0).merge(loc_hdr), '']
+    rescue JSON::ParserError
+      [400, headers(0), '']
+    end
+
+    # @!endgroup
     # @!group Standard Middleware Methods
 
     # Primary entry point of this middleware. Every request that makes it this
@@ -23,19 +65,6 @@ module RackSessionManipulation
       action.nil? ? app.call(env) : safe_handle(action, request)
     end
 
-    # Safely handle the middleware requests so we can properly handle errors in
-    # the middleware by returning the correct HTTP status code and message.
-    #
-    # @param [Symbol] action The local method that will handle the request.
-    # @param [Rack::Request] request The request that needs to be processed.
-    def safe_handle(action, request)
-      send(action, request)
-    rescue => e
-      [500, headers(e.message.length), e.message]
-    end
-
-    # @!endgroup
-
     # Setup the middleware with the primary application passed in, anything we
     # can't handle will be passed to this application.
     #
@@ -52,6 +81,9 @@ module RackSessionManipulation
         'PUT'     => :update
       }
     end
+
+    # @!endgroup
+    # @!group Request Handling Helpers
 
     # Look up what HTTP method was used for this request. In the event the
     # client doesn't support all HTTP methods, the standard '_method' parameter
@@ -97,43 +129,17 @@ module RackSessionManipulation
       }
     end
 
-    # Handle requests to entirely reset the session state.
+    # Safely handle the middleware requests so we can properly handle errors in
+    # the middleware by returning the correct HTTP status code and message.
     #
-    # @param [Rack::Request] request
-    # @return [Array<Fixnum, Hash, String>]
-    def reset(request)
-      request.env['rack.session'].clear
-      [204, headers(0), '']
+    # @param [Symbol] action The local method that will handle the request.
+    # @param [Rack::Request] request The request that needs to be processed.
+    def safe_handle(action, request)
+      send(action, request)
+    rescue => e
+      [500, headers(e.message.length), e.message]
     end
 
-    # Retrieve the entire contents of the session and properly encode it
-    # before returning.
-    #
-    # @param [Rack::Request] request
-    # @return [Array<Fixnum, Hash, String>]
-    def retrieve(request)
-      session_hash = request.env['rack.session'].to_hash
-      content = config.encoder.encode(session_hash)
-
-      [200, headers(content.length), content]
-    end
-
-    # Update the current state of the session with the provided data. This
-    # works effectively like a hash merge on the current session only setting
-    # and overriding keys in the session data provided.
-    #
-    # @param [Rack::Request] request
-    # @return [Array<Fixnum, Hash, String>]
-    def update(request)
-      session_data = request.params['session_data']
-      config.encoder.decode(session_data).each do |k, v|
-        request.env['rack.session'][k] = v
-      end
-
-      loc_hdr = { 'Location' => config.path }
-      [303, headers(0).merge(loc_hdr), '']
-    rescue JSON::ParserError
-      [400, headers(0), '']
-    end
+    # @!endgroup
   end
 end
