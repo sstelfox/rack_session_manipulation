@@ -17,6 +17,21 @@ RSpec.describe(RackSessionManipulation::Middleware) do
       expect(session).to receive(:clear)
       expect(subject.reset(request)).to eql([204, subject.headers(0), ''])
     end
+
+    it 'allows retrieving the session state' do
+      input_state = { 'more' => 6 }
+
+      expect(request).to receive(:env).and_return(env)
+      expect(env).to receive(:[]).with('rack.session').and_return(session)
+      expect(session).to receive(:to_hash).and_return(input_state)
+
+      status, _, content = subject.retrieve(request)
+
+      expect(status).to eq(200)
+      expect(default_config.encoder.decode(content)).to eq(input_state)
+    end
+
+    it 'allows updating the session state'
   end
 
   context 'Middleware Request Handling' do
@@ -62,6 +77,27 @@ RSpec.describe(RackSessionManipulation::Middleware) do
       expect(app).to receive(:call).with(env)
 
       subject.call(env)
+    end
+  end
+
+  context 'Request Handling Helpers' do
+    context '#extract_method' do
+      it 'uses _method parameter when available'
+      it 'falls back to the request method if _method parameter is not present'
+    end
+
+    context '#get_action' do
+      it 'returns nil when path doesn\'t match the configured one'
+      it 'returns a symbol action based on the extracted method'
+    end
+
+    context '#headers' do
+      it 'populates common headers with provided length'
+    end
+
+    context '#safe_handle' do
+      it 'returns and appropriate response when an error is introduced'
+      it 'calls the provided action under normal conditions'
     end
   end
 end
