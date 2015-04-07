@@ -22,7 +22,14 @@ RSpec.describe(RackSessionManipulation::Middleware) do
     end
   end
 
-  context 'RSM Middleware' do
+  context 'Middleware Request Handling' do
+    it 'sends middleware requests through the safe handler' do
+      env = Rack::MockRequest.env_for(default_config.path, method: :get)
+      expect(subject).to receive(:safe_handle)
+
+      subject.call(env)
+    end
+
     it 'calls the reset method on a DELETE request' do
       env = Rack::MockRequest.env_for(default_config.path, method: :delete)
       expect(subject).to receive(:reset)

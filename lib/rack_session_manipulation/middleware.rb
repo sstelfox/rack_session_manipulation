@@ -5,6 +5,8 @@ module RackSessionManipulation
   class Middleware
     attr_reader :app, :config, :routes
 
+    # @!group Standard Middleware Methods
+
     # Primary entry point of this middleware. Every request that makes it this
     # far into the stack will be parsed and when it matches something this
     # middleware is designed to handle it will stop the chain and process it
@@ -18,8 +20,21 @@ module RackSessionManipulation
       request = Rack::Request.new(env)
 
       action = get_action(request)
-      action.nil? ? app.call(env) : send(action, request)
+      action.nil? ? app.call(env) : safe_handle(action, request)
     end
+
+    # Safely handle the middleware requests so we can properly handle errors in
+    # the middleware by returning the correct HTTP status code and message.
+    #
+    # @param [Symbol] action The local method that will handle the request.
+    # @param [Rack::Request] request The request that needs to be processed.
+    def safe_handle(action, request)
+      send(action, request)
+    rescue => e
+      [500, headers(e.message.length), e.message]
+    end
+
+    # @!endgroup
 
     # Setup the middleware with the primary application passed in, anything we
     # can't handle will be passed to this application.
