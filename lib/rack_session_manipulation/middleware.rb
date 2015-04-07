@@ -2,6 +2,13 @@
 module RackSessionManipulation
   # Rack middleware that handles the accessing and modification of session
   # state.
+  #
+  # @attr_reader [Object] app The core Rack application running on top of this
+  #   middleware.
+  # @attr_reader [RackSessionManipulation::Config] config An instance of the
+  #   configuration provided to this middleware.
+  # @attr_reader [Hash<String => Symbol>] routes Mapping of HTTP methods to
+  #   local method handler.
   class Middleware
     attr_reader :app, :config, :routes
 

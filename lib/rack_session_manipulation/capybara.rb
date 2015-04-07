@@ -34,6 +34,10 @@ module RackSessionManipulation
       driver_method_fallback(:put, session_manipulation_config.path, data)
     end
 
+    # Expose an instance of the middleware's configuration object to Capybara
+    # to allow configuration alongside the DSL.
+    #
+    # @return [RackSessionManipulation::Config]
     def session_manipulation_config
       @rsm_config ||= Config.new
     end
