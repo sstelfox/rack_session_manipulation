@@ -23,4 +23,13 @@ RSpec.describe(HelloReflector, type: :feature) do
     visit '/some_place'
     expect(page).to have_content('other content')
   end
+
+  it 'can completely reset a session' do
+    visit '/location'
+    expect(page.session['reflection']).to eq('/location')
+
+    page.session_reset
+
+    expect(page.session['reflection']).to eq(nil)
+  end
 end
