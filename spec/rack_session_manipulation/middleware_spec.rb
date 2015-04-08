@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.describe(RackSessionManipulation::Middleware) do
   let(:app)             { double }
   let(:default_config)  { RackSessionManipulation::Config.new }
+  let(:encoder)         { default_config.encoder }
 
   subject { described_class.new(app) }
 
@@ -22,17 +23,18 @@ RSpec.describe(RackSessionManipulation::Middleware) do
       status, _, content = subject.retrieve(null_request)
 
       expect(status).to eq(200)
-      expect(default_config.encoder.decode(content)).to eq(input_state)
+      expect(encoder.decode(content)).to eq(input_state)
     end
 
     it 'allows updating the session state' do
-      input_state = default_config.encoder.encode({ 'shivering-winter-passage' => 'betaroma' })
+      input_state = encoder.encode('shivering-winter' => 'passage')
       param_double = double
 
-      expect(param_double).to receive(:[]).with('session_data').and_return(input_state)
+      expect(param_double)
+        .to receive(:[]).with('session_data').and_return(input_state)
 
       expect(null_request).to receive(:params).and_return(param_double)
-      expect(null_request).to receive(:[]=).with('shivering-winter-passage', 'betaroma')
+      expect(null_request).to receive(:[]=).with('shivering-winter', 'passage')
 
       status, headers, content = subject.update(null_request)
 
@@ -45,7 +47,8 @@ RSpec.describe(RackSessionManipulation::Middleware) do
       input_state = 'Not even close to real JSON'
       param_double = double
 
-      expect(param_double).to receive(:[]).with('session_data').and_return(input_state)
+      expect(param_double)
+        .to receive(:[]).with('session_data').and_return(input_state)
       expect(null_request).to receive(:params).and_return(param_double)
 
       status, _, _ = subject.update(null_request)
