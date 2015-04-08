@@ -111,22 +111,90 @@ RSpec.describe(RackSessionManipulation::Middleware) do
 
   context 'Request Handling Helpers' do
     context '#extract_method' do
-      it 'uses _method parameter when available'
-      it 'falls back to the request method if _method parameter is not present'
+      it 'uses _method parameter when available' do
+        params = { '_method' => 'post' }
+        request = double
+
+        expect(request).to_not receive(:request_method)
+        expect(request).to receive(:params).and_return(params).twice
+
+        action = subject.extract_method(request)
+        expect(action).to eq('POST')
+      end
+
+      it 'defaults to the request method if _method parameter is not present' do
+        params = {}
+        request = double
+
+        expect(request).to receive(:params).and_return(params)
+        expect(request).to receive(:request_method).and_return('PUT')
+
+        action = subject.extract_method(request)
+        expect(action).to eq('PUT')
+      end
     end
 
     context '#get_action' do
-      it 'returns nil when path doesn\'t match the configured one'
-      it 'returns a symbol action based on the extracted method'
+      it 'returns nil when path doesn\'t match the configured one' do
+        request = double
+
+        expect(request).to receive(:path).and_return('/not_the_config_path')
+        expect(subject).to_not receive(:routes)
+
+        expect(subject.get_action(request)).to eq(nil)
+      end
+
+      it 'returns an action when the path matches the configured one' do
+        request = double
+
+        expect(request).to receive(:path).and_return(default_config.path)
+        expect(subject).to receive(:extract_method).with(request)
+
+        subject.get_action(request)
+      end
     end
 
     context '#headers' do
-      it 'populates common headers with provided length'
+      it 'populates common headers with provided length' do
+        hdrs = subject.headers(178)
+
+        expect(hdrs).to have_key('Content-Length')
+        expect(hdrs).to have_key('Content-Type')
+
+        expect(hdrs['Content-Length']).to eq(178)
+
+        # Ensure this test gets updated if we mess around with the headers
+        expect(hdrs.keys.length).to eq(2)
+      end
     end
 
     context '#safe_handle' do
-      it 'returns and appropriate response when an error is introduced'
-      it 'calls the provided action under normal conditions'
+      let(:null_request) { double }
+
+      it 'returns a server error when the action doesn\'t exist' do
+        expect(subject).to_not respond_to(:broken_action)
+
+        status, _, content = subject.safe_handle(:broken_action, null_request)
+
+        expect(status).to eq(500)
+        expect(content).to start_with('undefined method')
+      end
+
+      it 'returns a server error when the action raises an error' do
+        expect(subject)
+          .to receive(:raising_action).with(null_request).and_raise('message')
+
+        status, _, content = subject.safe_handle(:raising_action, null_request)
+
+        expect(status).to eq(500)
+        expect(content).to eq('message')
+      end
+
+      it 'calls the provided action under normal conditions' do
+        expect(subject).to receive(:testing_action).with(null_request)
+
+        subject.safe_handle(:testing_action, null_request)
+      end
     end
   end
 end
