@@ -117,9 +117,9 @@ require 'rack_session_access/capybara'
 After that anywhere you are using Capybara you will have three additional
 methods available to you:
 
-* reset_session: Clear the entire contents of the existing session.
-* session: Get a hash representing the current session state.
-* session=: additional data into the current session.
+* `reset_session`: Clear the entire contents of the existing session.
+* `session`: Get a hash representing the current session state.
+* `session=`: additional data into the current session.
 
 When setting the session, you'll want to provide a hash. The values at the top
 level keys of the hash will replace the equivalent keys in the current session.
