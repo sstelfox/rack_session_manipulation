@@ -8,9 +8,10 @@
 [![Yard Docs](http://img.shields.io/badge/yard-docs-green.svg)](http://www.rubydoc.info/gems/rack_session_manipulation)
 
 RackSessionManipulation is rack middleware designed to expose internal session
-information to be read and modified from within tests. This is intended to
-assist in treating routes as modular units of work that can be tested in
-isolation without the dependency of the rest of your application.
+information to be read and modified from within tests (primarily for use within
+Capybara). This is intended to assist in treating routes as modular units of
+work that can be tested in isolation without the dependency of the rest of your
+application.
 
 This is not intended to replace full set of 'behavior' tests, but can be used
 to speed up getting to a 'Given' state in place of helpers that previously
@@ -37,6 +38,18 @@ gem solved the updating of state using multiple requests, and marshalled
 objects as well as unecessary use of builder. The approach seemed more
 complicated, slower and more dangerous than necessary.
 
+If you are looking to test a specific session state from a pure rack/test unit
+perspective, you don't need this gem. The native rack/test HTTP methods provide
+the mechanism to directly set and test state like so:
+
+```
+session_data = { 'user_id' => 5 }
+get '/test_path', {}, { 'rack.session' => session_data }
+```
+
+The above will make a get request to '/test_path' with the session state
+contained within the `session_data` variable.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -54,6 +67,64 @@ Or install it yourself as:
     $ gem install rack_session_manipulation
 
 ## Usage
+
+The middleware is useful on it's own, but this gem's primary power comes from
+it's integration with Capybara. On it's own or with capybara, the first step is
+to inject the middleware. This varies from framework to framework, the most
+common examples I've provided below.
+
+### Rack
+
+The following is a super simple rack app that at a minimum can be used as a
+fallback definition for any Ruby web application by replacing the `YourApp`
+constant with your application (generally this is what is passed to `run` in
+your 'config.ru' file. At the same time you'll want to replace the value in
+your 'config.ru' file with the constant `YourAwesomeRackStack` (though you can
+change that as you'd like).
+
+```ruby
+YourAwesomeRackStack = Rack::Builder.new do
+  # To access sessions they must first exist. Configure the appropriate Rack
+  # session mechanism prior to using this middleware.
+  use Rack::Session::Cookie, secret: 'some secret string'
+
+  # Add this middleware to the stack
+  use RackSessionManipulation::Middleware
+
+  # Finally, running your own App at the top of the stack
+  run YourApp
+end.to_app
+```
+
+### Sinatra
+
+TODO
+
+### Rails
+
+TODO
+
+### Capybara Usage
+
+After setting up the middleware and Capybara as you would normally, the only
+additional setup is requiring the Capybara helpers (you generally want to add
+this line after the 'capybara' require):
+
+```ruby
+require 'rack_session_access/capybara'
+```
+
+After that anywhere you are using Capybara you will have three additional
+methods available to you:
+
+* reset_session: Clear the entire contents of the existing session.
+* session: Get a hash representing the current session state.
+* session=: additional data into the current session.
+
+When setting the session, you'll want to provide a hash. The values at the top
+level keys of the hash will replace the equivalent keys in the current session.
+Any keys that existed before but aren't getting set will continue to exist. It
+works like a simple Hash merge. The other methods are fairly self explanatory.
 
 ## Contributing
 
