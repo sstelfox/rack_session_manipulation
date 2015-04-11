@@ -1,4 +1,3 @@
-# Parent namespace for the Rack Session Manipulation middleware.
 module RackSessionManipulation
   # This module exposes the session state helpers to Capybara, allowing feature
   # tests to quickly access the session mechanisms.

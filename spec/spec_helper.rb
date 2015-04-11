@@ -24,6 +24,8 @@ require 'rack_session_manipulation/capybara'
 require 'apps/rack_app'
 
 RSpec.configure do |config|
+  config.include(Rack::Test::Methods, type: :rack)
+
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
